@@ -1,0 +1,36 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/ionic": "^0.12.1",
+    "nuxt": "^3.7.4",
+    "sass": "^1.69.4",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "@capacitor/android": "^5.5.0",
+    "@capacitor/app": "^5.0.6",
+    "@capacitor/camera": "^5.0.7",
+    "@capacitor/cli": "^5.5.0",
+    "@capacitor/core": "^5.5.0",
+    "@capacitor/device": "^5.0.6",
+    "@capacitor/ios": "^5.5.0",
+    "@ionic/pwa-elements": "^3.2.2",
+    "crypto-js": "^4.1.1",
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
+    "sequelize": "^6.33.0",
+    "sqlite3": "^5.1.6",
+    "vuex": "^4.0.2"
+  }
+}

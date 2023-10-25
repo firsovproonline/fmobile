@@ -1,0 +1,8 @@
+{
+  "appId": "firsovpro.online",
+  "appName": "fmobile",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
