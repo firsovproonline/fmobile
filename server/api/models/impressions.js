@@ -77,6 +77,7 @@ module.exports = (sequelize, Sequelize) => {
       }
     }, {
       // Здесь определяются другие настройки модели
+
     }
   )
   return impression;

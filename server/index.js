@@ -1,4 +1,4 @@
-const {Sequelize, Op} = require("sequelize");
+const {Sequelize, Op, fn} = require("sequelize");
 const sqlite3 = require('sqlite3')
 const express = require('express')
 const mysql = require("mysql")
@@ -6,7 +6,21 @@ const http = require('http')
 const app = express()
 const config = require("./api/config/db.config.js");
 const promiseAR = [];
+const connection = mysql.createConnection({
+    host: "127.0.0.1",
+    user: "fmobile",
+    password: "12345",
+    database: 'fmobile',
+    debug: false,
+    multipleStatements: true
+});
+connection.connect();
+
 let db = {}
+async function updateCalldate(db,item){
+    let sql = `UPDATE impressions SET calldate = `+item.start_time+` WHERE JSON_EXTRACT(\`phone\`,'$') LIKE '%`+item.client_number+`%'`
+    return await db.sqlite.query(sql)
+}
 
 // внешнее подключение
 db.sequelizeMysql = new Sequelize(
@@ -46,6 +60,12 @@ promiseAR.push(new Promise(function(resolve, reject) {
             dialect: 'mysql',
             operatorsAliases: 0,
             logging: 0,
+            retry: {
+                match: [/Deadlock/i, Sequelize.ConnectionError], // Retry on connection errors
+                max: 3, // Maximum retry 3 times
+                backoffBase: 3000, // Initial backoff duration in ms. Default: 100,
+                backoffExponent: 1.5, // Exponent to increase backoff each try. Default: 1.1
+            },
             // storage: './api/db/fmobile.sqlite'
         });
         db.rent21moiZvonki = require("./api/models/rent21.callzvon.model.js")(db.sqlite, Sequelize);
@@ -57,6 +77,8 @@ promiseAR.push(new Promise(function(resolve, reject) {
     })
 
 }));
+
+
 
 let server = {}
 Promise.all(promiseAR).then(
@@ -126,8 +148,35 @@ Promise.all(promiseAR).then(
                 out[item.UID][item.TITLE] = item.VAL
             })
             db.impression.bulkCreate(Object.values(out)).then(() => {
+
                 console.log('Импорт клиентов окончен')
-            });
+                console.log('Импорт звонков начало')
+                let sql = "SELECT * FROM callzvon"
+                db.sequelizeMysql.query(sql).then(rows=>{
+                     db.rent21moiZvonki.bulkCreate(rows[0]).then(()=>{
+                        let totalR =  0
+                        let allSql = ''
+                        let uids = {}
+                        rows[0].forEach(item=>{
+                            if(!uids[item.client_number]){
+                                uids[item.client_number] = 1
+                                if(item.client_number && item.client_number!='+' && item.client_number!='' && item.client_number.length > 2 ){
+                                    allSql+=`UPDATE impressions SET calldate = `+item.start_time+` WHERE JSON_EXTRACT(\`phone\`,'$') LIKE '%`+item.client_number+`%';`
+                                    totalR++
+                                }
+                            }
+                        })
+                        connection.query(allSql, [], function(err, result) {
+                            if (result) {
+                                console.log('Завершение синхронизации звонков и клиентов',totalR)
+                            }
+                            else {
+                                console.log('error',err)
+                            }
+                        })
+                    })
+                })
+            })
         })
     }
 )
