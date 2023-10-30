@@ -1,21 +1,7 @@
 <template>
       <div id="pagewidth">
         <MobileMenu />
-        <header id="header">
-          <div class="center">
-            <nav id="mainNav">
-              <ul>
-                <li class="active"><a href="#pagewidth"><span>gallery</span></a></li>
-                <li><a href="#twoColumnLayout"><span>2 columns</span></a></li>
-                <li><a href="#threeColumnLayout"><span>3 columns</span></a></li>
-                <li><a href="#boxes"><span>boxes</span></a></li>
-                <li><a href="#testiomonialsTab"><span>testimonials</span></a></li>
-                <li><a href="#contactUs"><span>contact us</span></a></li>
-              </ul>
-            </nav>
-          </div>
-        </header>
-        <div id="content" style="margin-top: 42px">
+        <div style="margin-top: 10px">
           <slot />
         </div>
         <footer id="footer">

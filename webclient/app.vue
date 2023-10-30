@@ -23,14 +23,3 @@ const items = [{
 }]
 </script>
 
-<style>
-:root  {
-  --color-primary-50: 132 204 22;
-  --color-primary-100: 132 204 122;
-}
-
-.text-primary-500 {
-  --tw-text-opacity: 1;
-  color:#ffffff;
-}
-</style>

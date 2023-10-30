@@ -148,7 +148,6 @@ Promise.all(promiseAR).then(
                 out[item.UID][item.TITLE] = item.VAL
             })
             db.impression.bulkCreate(Object.values(out)).then(() => {
-
                 console.log('Импорт клиентов окончен')
                 console.log('Импорт звонков начало')
                 let sql = "SELECT * FROM callzvon"
