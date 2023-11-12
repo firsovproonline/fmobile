@@ -6,6 +6,9 @@
 .cache
 dist
 
+server/config
+db.config.js
+
 # Node dependencies
 node_modules
 

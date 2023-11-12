@@ -2,10 +2,26 @@ const {Sequelize, Op, fn} = require("sequelize");
 const sqlite3 = require('sqlite3')
 const express = require('express')
 const mysql = require("mysql")
-const http = require('http')
+const https = require('https')
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const passport = require('passport');
+const YandexStrategy = require('passport-yandex').Strategy;
+const methodOverride = require('method-override');
+const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
+const fs = require('fs')
+
 const app = express()
+const cors = require("cors")
 const config = require("./api/config/db.config.js");
 const promiseAR = [];
+
+const httpsOptions = {
+    key: fs.readFileSync(__dirname + '/api/config/www.firsovpro.online.key'),
+    cert: fs.readFileSync(__dirname + '/api/config/certificate.crt')
+};
+
 const connection = mysql.createConnection({
     host: "127.0.0.1",
     user: "fmobile",
@@ -15,8 +31,82 @@ const connection = mysql.createConnection({
     multipleStatements: true
 });
 connection.connect();
+const corsOptions = {
+    origin: "*"
+}
 
-let db = {}
+passport.serializeUser((user, done)=> {
+    console.log(user)
+        done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+});
+
+passport.use(new YandexStrategy({
+        clientID: config.YANDEX_CLIENT_ID,
+        clientSecret: config.YANDEX_CLIENT_SECRET,
+        callbackURL: config.callbackURL
+    },
+    function(accessToken, refreshToken, profile, done) {
+        // asynchronous verification, for effect...
+        process.nextTick(function () {
+            // To keep the example simple, the user's Yandex profile is returned
+            // to represent the logged-in user.  In a typical application, you would
+            // want to associate the Yandex account with a user record in your
+            // database, and return that user instead.
+            return done(null, profile);
+        });
+    }
+));
+
+
+app.use(cors(corsOptions))
+app.use(cookieParser());
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+
+app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: 'uwotm8'
+}));
+
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+//require('./routes/yandex')(app);
+
+
+app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: 'uwotm8'
+}));
+
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.use(fileUpload({
+    createParentPath: true,
+    limits: {
+        fileSize: 20 * 1024 * 10024 * 10024 //2MB max file(s) size
+    },
+}));
+
+const db = require("../server/api/models/index.js");
+
 async function updateCalldate(db,item){
     let sql = `UPDATE impressions SET calldate = `+item.start_time+` WHERE JSON_EXTRACT(\`phone\`,'$') LIKE '%`+item.client_number+`%'`
     return await db.sqlite.query(sql)
@@ -41,52 +131,43 @@ db.sequelizeMysql = new Sequelize(
     }
 );
 
-promiseAR.push(new Promise(function(resolve, reject) {
-//************** не менять !!!  ***********************
-    db.sequelizeMysql.sync({force: false}).then(()=>{
-        console.error('DB Rent21 старт')
-        resolve()
+//db.sequelizeMysql.sync({force: false}).then(()=>{
+//    console.error('DB Rent21 старт')
+//});
 
-    });
-}));
-
-
+app.db = db
 db.db3 = new sqlite3.Database('./api/db/fmobile.sqlite');
-promiseAR.push(new Promise(function(resolve, reject) {
-//************** не менять !!!  ***********************
-    db.db3.serialize(()=>{
-        db.sqlite = new Sequelize('fmobile', 'fmobile','12345',{
-            host: '127.0.0.1',
-            dialect: 'mysql',
-            operatorsAliases: 0,
-            logging: 0,
-            retry: {
-                match: [/Deadlock/i, Sequelize.ConnectionError], // Retry on connection errors
-                max: 3, // Maximum retry 3 times
-                backoffBase: 3000, // Initial backoff duration in ms. Default: 100,
-                backoffExponent: 1.5, // Exponent to increase backoff each try. Default: 1.1
-            },
-            // storage: './api/db/fmobile.sqlite'
-        });
-        db.rent21moiZvonki = require("./api/models/rent21.callzvon.model.js")(db.sqlite, Sequelize);
-        db.impression = require("./api/models/impressions")(db.sqlite, Sequelize);
-        db.sqlite.sync({force: true}).then(()=>{
-            console.error('DB старт')
-            resolve()
-        })
-    })
 
-}));
+app.use((req, res, next)=> {
+    res.db = app.db
+    next();
+});
+
+app.get('/auth/yandex',
+    passport.authenticate('yandex'),
+    function(req, res){
+
+        // The request will be redirected to Yandex for authentication, so this
+        // function will not be called.
+    });
+
+app.get('/auth/yandex/callback',
+    passport.authenticate('yandex', { failureRedirect: '/login' }),
+    function(req, res) {
+        //console.error('/auth/yandex/callback', req.query)
+        res.redirect('http://192.168.1.21:3010');
+    });
+
+const server = https.createServer(httpsOptions, app).listen(3001);
+require('./api/routes/main')(app);
+require('./api/routes/master')(app);
+console.error('Сервер старт')
 
 
-
-let server = {}
 Promise.all(promiseAR).then(
     result => {
-        const httpsOptions = {};
-        server = http.createServer(httpsOptions, app).listen(3001);
-        console.error('Сервер старт')
         let sql = "SELECT * FROM lids";
+/*
         db.sequelizeMysql.query(sql).then(rows=>{
             const out = {}
             rows[0].forEach(item=>{
@@ -177,6 +258,8 @@ Promise.all(promiseAR).then(
                 })
             })
         })
+
+ */
     }
 )
 

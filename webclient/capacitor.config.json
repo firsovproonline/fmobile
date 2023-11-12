@@ -1,0 +1,13 @@
+{
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  },
+  "appId": "nuxt.app",
+  "appName": "nuxt-app",
+  "webDir": "./.output/public",
+  "server": {
+    "cleartext": true
+  }
+}

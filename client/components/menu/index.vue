@@ -6,6 +6,12 @@
       </svg>
     </div>
     <div style="margin-left: 12px;width: 100%;text-align: center;" ref="info">Справочник побережья</div>
+
+    <div @click="playRadio" style="padding-right: 12px;padding-top: 6px;" ref="radioB">
+      <svg v-if="!flag" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pause"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+    </div>
+
   </div>
 </template>
 
@@ -14,7 +20,37 @@ import { App } from '@capacitor/app';
 
 export default {
   name: "mobileMenu",
+  data: () => ({
+    audio: null,
+    flag: false
+  }),
+  methods:{
+    playRadio(){
+      if(!this.flag)
+        this.audio.play()
+      else
+        this.audio.pause()
+
+      this.flag = !this.flag
+      window.radioFlag = this.flag
+    },
+    loadedRadio(ev){
+//      console.log(this.$refs.radioB)
+//      this.$refs.radioB.click()
+      //this.audio.play();
+    }
+  },
   mounted() {
+    if(!window.radio){
+      this.audio =  new window.Audio()
+      window.radioFlag = this.flag
+      window.radio = this.audio
+      //this.$el.appendChild(this.audio)
+      this.audio.src = 'http://firsovpro.online:8000/';
+    }else{
+      this.audio = window.radio
+      this.flag = window.radioFlag
+    }
     //App.addListener('backButton', (state) => {
     //  this.$refs.info.innerHTML ='Выход из программы;';
     //});

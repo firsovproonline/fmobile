@@ -1,12 +1,16 @@
 <template>
+  <div style="padding-left: 4px;padding-right: 4px">
+    <top-menu />
+  </div>
+  <!--
 <UCard class="mt-10">
   <template #header>
     <div class="flex justify-between">
     </div>
   </template>
   <div class="flex flex-wrap" >
-    <UContainer class="mt--10 flex-col" style="max-width: 300px;min-width: 300px">
-      <UAccordion :items="items" class="grey">
+    <UContainer class="mt--10 flex-col" style="max-width: 300px;min-width: 300px" >
+      <UAccordion :items="items" class="grey1">
         <template #item="{ item }">
           <p class="italic text-gray-900 dark:text-white text-center">
             {{ item.description }}
@@ -16,7 +20,7 @@
         <template #getting-started>
           <div class="text-red-400 dark:text-white text-center">
             <p class="text-sm text-red-400 dark:text-gray-400 mt-2">
-              Fully styled and customizable components for Nuxt.
+              192.168.1.444
             </p>
           </div>
         </template>
@@ -47,10 +51,13 @@
     </UContainer>
   </div>
 </UCard>
+-->
 </template>
 
 <script setup>
+definePageMeta({ auth: false })
 import GridImpression from "../components/content/grid/gridImpression.vue";
+import TopMenu from "../components/content/grid/topMenu.vue";
 
 const items = [{
   label: 'Клиенты',
