@@ -25,12 +25,14 @@
     "@capacitor/core": "^5.5.1",
     "@capacitor/haptics": "5.0.6",
     "@capacitor/keyboard": "5.0.6",
+    "@capacitor/local-notifications": "^5.0.6",
     "@capacitor/status-bar": "5.0.6",
     "@sidebase/nuxt-auth": "^0.4.3",
     "express": "^4.18.2",
     "husky": "^8.0.3",
     "mysql2": "^3.6.3",
-    "next-auth": "4.21.1"
+    "next-auth": "4.21.1",
+    "vuex": "^4.1.0"
   },
   "version": "0.0.0"
 }

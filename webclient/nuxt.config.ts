@@ -1,13 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 // @ts-ignore
   target: 'server',
   modules: ["@nuxt/ui",'@sidebase/nuxt-auth'],
   auth: {
     origin: process.env.ORIGIN,
-    enableGlobalAppMiddleware: true
+    enableGlobalAppMiddleware: false,
   },
+// @ts-ignore
+  plugins: [
+    {src: '~/plugins/main.js', mode: 'client'},
+  ],
 // @ts-ignore
   ssr : false,
 // @ts-ignore
