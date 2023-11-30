@@ -23,10 +23,35 @@ export default {
         const e = await connectionMysql.execute(query);
         return e;
     },
-    async findAllMaster() {
-        const queryTotal = 'SELECT count(id) as total FROM master';
+    async findAllMaster(q: any) {
+        let WHERE = ``
+        if (q.q && q.q !== '' && q.q !=='undefined'){
+            WHERE += ` (firstname like '%`+q.q+`%'`
+                + ` OR lastName like '%`+q.q+`%'`
+                + ` OR profession like '%`+q.q+`%'`
+                + ` OR phone like '%`+q.q+`%'`
+                + `)`
+        }
+        if(q.email && q.email !== '' && q.email !== 'undefined'){
+            if (WHERE !== ''){
+                WHERE += ' AND '
+            }
+            WHERE += ` (email = '`+q.email+`')`
+        }
+        if(q.status && q.status != 1 && q.status !== 'undefined'){
+            if (WHERE !== ''){
+                WHERE += ' AND '
+            }
+            WHERE += ` (status = '`+q.status+`')`
+        }
+
+        if(WHERE!==''){
+            WHERE = ` WHERE ` + WHERE
+        }
+        console.log('WHERE', WHERE)
+        const queryTotal = 'SELECT count(id) as total FROM master '+WHERE;
         const [total] = await connectionMysql.execute(queryTotal);
-        const query = 'SELECT * FROM master';
+        const query = 'SELECT * FROM master '+WHERE;
         const [masters] = await connectionMysql.execute(query);
         return {rows: masters as IMaster[], total: total[0].total as number}   ;
     },
@@ -36,19 +61,36 @@ export default {
         return  master[0];
     },
     async updateMaster(master: any) {
-        let query = `UPDATE master SET `
-        for(let key in master){
-            if(query!==`UPDATE master SET `) query+=`,`
-            if(key !=='email' && key !=='id' && key !=='uid'){
-                if(master[key])
-                    query += ` `+key +`='`+master[key]+`' `
-                else
-                    query += ` `+key +`=`+master[key]+' '
+        console.log(master)
+        const queryTotal = `SELECT count(id) as total FROM master  WHERE email='`+master.email+`'`
+        const [total] = await connectionMysql.execute(queryTotal);
+        if([total][0][0].total ==0){
+            let query = "INSERT INTO master (email,phone,profession,firstName,lastName,photo) VALUES ('"+
+                master.email+"','"+
+                master.phone+"','"+
+                master.profession+"','"+
+                master.firstName+"','"+
+                master.lastName+"','"+
+                master.photo+"'"+
+                ")";
+            const [masters] = await connectionMysql.execute(query);
+            return masters as IMaster[];
+        }else{
+            let query = `UPDATE master SET `
+            for(let key in master){
+                if(query!==`UPDATE master SET `) query+=`,`
+                if(key !=='email' && key !=='id' && key !=='uid'){
+                    if(master[key] !== null )
+                        query += ` `+key +`='`+master[key]+`' `
+                    else
+                        query += ` `+key +`=`+master[key]+' '
+                }
             }
+            query += ` WHERE email='`+master.email+`'`
+            console.log('POSTMASTER', query)
+            const [masters] = await connectionMysql.execute(query, [master]);
+            return masters
         }
-        query += ` WHERE email='`+master.email+`'`
-        const [masters] = await connectionMysql.execute(query, [master]);
-        return masters
     },
     async addMaster(master: string) {
         const query = "INSERT INTO master (master) VALUES (?)";

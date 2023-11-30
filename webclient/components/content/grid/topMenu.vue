@@ -7,7 +7,7 @@ let pending = true
 pending = false
 const page = ref(1)
 const rows = [
-  {title : 'Радио побережья',
+  {title : 'Новости побережья',
     img: '/img/radio.png',
     to: '/radio'
   },
@@ -15,9 +15,13 @@ const rows = [
     img: '/img/rabotnic.png',
     to: '/master'
   },
+  {title : 'Ярмарка',
+    img: '/img/product.jpg',
+    to: '/products'
+  },
   {title : 'Недвижимость',
     img: '/img/nedvi.jpg',
-    to: '/'
+    to: '/realestate'
   },
   {title : 'Адреса чиновников',
     img: '/img/kontMer.png',

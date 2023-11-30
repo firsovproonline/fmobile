@@ -1,16 +1,5 @@
 <template>
-  <table style="width: 100%;margin-top: 20px">
-    <tr>
-      <td style="width: 20%"></td>
-      <td>
-        <audio controls autoplay >
-          <source src="https://firsovpro.online/stream" type="audio/aac">
-        </audio>
-      </td>
-      <td style="width: 20%"></td>
-    </tr>
-  </table>
-  <GridNews />
+  <GridNews itemMinimal="true" />
 </template>
 
 <script setup>
@@ -20,6 +9,6 @@ definePageMeta({ auth: false })
 
 </script>
 
-<style scoped>
+<style>
 
 </style>

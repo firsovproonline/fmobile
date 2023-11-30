@@ -6,29 +6,8 @@ const store = createStore({
             count: 0,
             user: {},
             news: {
-                total: 1,
-                rows: [
-                    {
-                        id: 1,
-                        title: 'Алень подготовила хреновуху',
-                        body: 'Народ записывается в сомелье. Будем надеятся что фраза водка Хреновая заиграет новым смыслом',
-                        video: null,
-                        img1:'/hrenovuha.jpeg',
-                        img2:'',
-                        img3:'',
-                        date: ''
-                    },
-                    {
-                        id: 2,
-                        title: 'Дом сгорел а радио осталось',
-                        body: 'Но жизнь продолжается. Правда без помощи добрых людей вновь остроить дом к сожалению не получится',
-                        video: '/help.mp4',
-                        img1:'/help.jpg',
-                        img2:'',
-                        img3:'',
-                        date: ''
-                    }
-                ],
+                total: 0,
+                rows: [],
                 date: 0
             },
             product: {
@@ -37,37 +16,57 @@ const store = createStore({
                 date: 0
             },
             master: {
-                total: 3,
-                rows: [
-                    {
-                        firstName: 'Иван',
-                        lastName: 'Иванов',
-                        photo:  '/img/avatar.png',
-                        profession: 'Электрик',
-                        phone: '+7 (999) 999-99-99',
-                        id: 1
-                    },
-                    {
-                        firstName: 'Иван',
-                        lastName: 'Сидоров',
-                        photo:  '/img/avatar.png',
-                        profession: 'Сантехник (немец)',
-                        phone: '+7 (999) 999-99-99',
-                        id: 2
-                    },
-                    {
-                        firstName: 'Сергей',
-                        lastName: 'Петров',
-                        photo:  '/img/avatar.png',
-                        profession: 'Сварщик',
-                        phone: '+7 (999) 999-99-99',
-                        id: 3
-                    },
-
-                ],
+                total: 0,
+                rows: [],
+                date: 0
+            },
+            realEstate: {
+                total: 0,
+                rows: [],
                 date: 0
             }
         };
+    },
+    actions: {
+        getRealEstate(store, params){
+            $fetch( `/api/realestate`, {
+                method: 'GET',
+                params: {
+                    q: params.q.value,
+                    page: params.page.value,
+                    perPage:15,
+                    status: params.status.value
+                }
+            }).then(items=>{
+                store.state.realEstate = items
+            })
+        },
+
+        getMaster(store, params){
+            $fetch( `/api/master`, {
+                method: 'GET',
+                params: {
+                    q: params.q.value,
+                    page: params.page.value,
+                    perPage:15,
+                    status: params.status.value
+                }
+            }).then(items=>{
+                store.state.master = items
+            })
+        },
+        getNews(store, params){
+            $fetch( `/api/news`, {
+                method: 'GET',
+                params: {
+                    q: '',
+                    page: 1,
+                    perPage:15,
+                }
+            }).then(items=>{
+                store.state.news = items
+            })
+        },
     },
     mutations: {
         setMaster(state, value){
