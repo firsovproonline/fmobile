@@ -4,15 +4,10 @@
           <div class="flex items-center justify-between gap-3 h-[--header-height]">
             <div class="lg:flex-1 flex items-center gap-1.5 " style="padding: 12px;padding-left: 4px;padding-right: 4px;width: 100%">
               <div style="width: 100%;display: flex">
-                <select v-model="$colorMode.preference" style="width: 1px">
-                  <option value="system">System</option>
-                  <option value="light" selected>Light</option>
-                  <option value="dark">Dark</option>
-                  <option value="sepia">Sepia</option>
-                </select>
-                <audio controls autoplay  style="height: 28px;max-width: 90%">
+                <audio controls autoplay  style="height: 28px;max-width: 70%">
                   <source src="https://firsovpro.online/stream" type="audio/aac">
                 </audio>
+                {{this.width}}
               </div>
               <HeaderMenu />
             </div>
@@ -22,7 +17,6 @@
       <UContainer>
         <slot />
       </UContainer>
-
 </template>
 
 <style>
@@ -32,6 +26,19 @@
 import HeaderMenu from "../components/content/headerMenu.vue";
 export default {
   components: {HeaderMenu},
+  data: () => ({
+    width: 1100,
+  }),
+  mounted() {
+
+    window.addEventListener('resize', this.resize);
+    this.resize();
+  },
+  methods:{
+    resize(){
+      this.width = window.innerWidth;
+    },
+  }
 }
 </script>
 

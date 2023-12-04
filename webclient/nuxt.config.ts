@@ -28,6 +28,7 @@ export default defineNuxtConfig({
 // @ts-ignore
   plugins: [
     {src: '~/plugins/main.js', mode: 'client'},
+    { src: '~/plugins/maps', mode: 'client' },
   ],
 // @ts-ignore
   ssr : false,
